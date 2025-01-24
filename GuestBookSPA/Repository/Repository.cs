@@ -3,10 +3,10 @@ using GuestBookSPA.Models;
 
 namespace GuestBookSPA.Repository
 {
-    public class GBookRepository : IRepository
+    public class Repository : IRepository
     {
-        private readonly UserContext _context;
-        public GBookRepository(UserContext context)
+        private readonly GuestBookContext _context;
+        public Repository(GuestBookContext context)
         {
             _context = context;
         }

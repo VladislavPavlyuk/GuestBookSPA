@@ -7,9 +7,9 @@ namespace GuestBookSPA.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserContext _context;
+        private readonly GuestBookContext _context;
 
-        public AccountController(UserContext context)
+        public AccountController(GuestBookContext context)
         {
             _context = context;
         }

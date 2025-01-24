@@ -9,7 +9,10 @@ namespace GuestBookSPA.Models
         public GuestBookContext(DbContextOptions<GuestBookContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
+            if (Database.EnsureCreated())
+            {                
+                SaveChanges();
+            }
         }
     }
 }
