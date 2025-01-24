@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using GBook.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using GBook.Repository;
+using GuestBookSPA.Models;
+using GuestBookSPA.Repository;
 
 namespace GuestBookSPA.Controllers
 {

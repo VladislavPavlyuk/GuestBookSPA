@@ -24,7 +24,7 @@ namespace GuestBookSPA.Controllers
         {
             if (_context.Students == null)
                 return Problem("Список студентов пустой!");
-            List<Message> list = await _context.Students.ToListAsync();
+            List<Student> list = await _context.Students.ToListAsync();
             string response = JsonConvert.SerializeObject(list);
             return Json(response);
         }
@@ -40,7 +40,7 @@ namespace GuestBookSPA.Controllers
             return Json(response);
         }
         [HttpPost]
-        public async Task<IActionResult> InsertStudent(Message student)
+        public async Task<IActionResult> InsertStudent(Student student)
         {
             if (ModelState.IsValid)
             {
@@ -52,7 +52,7 @@ namespace GuestBookSPA.Controllers
             return Problem("Проблемы при добавлении студента!");
         }
         [HttpPut]
-        public async Task<IActionResult> UpdateStudent(Message student)
+        public async Task<IActionResult> UpdateStudent(Student student)
         {
             if (ModelState.IsValid)
             {
