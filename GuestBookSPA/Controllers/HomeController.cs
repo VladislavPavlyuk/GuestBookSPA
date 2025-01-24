@@ -1,17 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using GuestBookSPA.Models;
+﻿using GuestBookSPA.Models;
 using GuestBookSPA.Repository;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace GuestBookSPA.Controllers
 {
     public class HomeController : Controller
     {
-        /*private readonly UserContext _context;
-        public HomeController(UserContext context)
-        {
-            _context = context;
-        }*/
-
         IRepository repo;
 
         public HomeController(IRepository r)
@@ -19,28 +14,31 @@ namespace GuestBookSPA.Controllers
             repo = r;
         }
 
-        // GET: Messages
         public async Task<IActionResult> Index()
-        {
-            //var userContext = await _context.Messages.Include(p => p.User);
-            var model = await repo.GetMessageList();
+        {           
+            var model = await repo.GetAll();
+
             return View(model);
         }
 
-        // GET: Messages/Create
-        public IActionResult Create()
+        [HttpGet]
+        public async Task<IActionResult> GetMessageList()
         {
-            //ViewData["Id_User"] = new SelectList(repo.GetMessageList(), "Id","Message","MessageDate","User.Name" );
-            return View();
+            if (repo.GetAll == null)
+                return Problem("The message list is empty!");
+
+            List<Messages> list = await repo.GetAll();
+
+            string response = JsonConvert.SerializeObject(list);
+
+            return Json(response);
         }
 
-        // POST: Messages/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Message")] Messages mes)
+        public async Task<IActionResult> SendMessage(Messages mes)
         {
-            try
-            {               
+            if (ModelState.IsValid)
+            {
                 mes.MessageDateTime = DateTime.Now;
 
                 mes.UserId = int.Parse(HttpContext.Session.GetString("Id"));
@@ -49,12 +47,45 @@ namespace GuestBookSPA.Controllers
 
                 await repo.Save();
 
-                return RedirectToAction(nameof(Index));
+                string response = "The message was sent successfully!";
+
+                return Json(response);
             }
-            catch (Exception)
+            return Problem("Problem in message sending!");
+        }
+        [HttpPut]
+        public async Task<IActionResult> UpdateMessage(Messages mes)
+        {
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                repo.Update(mes);
+
+                await repo.Save();
+
+                string response = "The message updated successfully!";
+
+                return Json(response);
             }
+            return Problem("Problem in message updating!");
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteMessage(int id)
+        {
+            if (repo.GetAll == null)
+            {
+                return Problem("The message list is empty!");
+            }
+            var mes = await repo.GetById(id);
+
+            if (mes != null)
+            {
+                repo.Delete(id);
+            }
+            await repo.Save();
+
+            string response = "The message deleted successfully!";
+
+            return Json(response);
         }
     }
 }

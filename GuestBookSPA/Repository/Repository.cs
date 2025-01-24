@@ -11,14 +11,30 @@ namespace GuestBookSPA.Repository
             _context = context;
         }
 
-        public async Task<List<Messages>> GetMessageList()
+        public async Task<List<Messages>> GetAll()
         {
             return await _context.Messages.Include(p => p.User).ToListAsync();
 
         }
+        public async Task<Messages> GetById(int id)
+        {
+            return await _context.Messages.FindAsync(id);
+        }
+
+
         public async Task Create(Messages mes)
         {
             await _context.Messages.AddAsync(mes);
+        }
+        public void Update(Messages mes)
+        {
+            _context.Entry(mes).State = EntityState.Modified;
+        }
+        public async Task Delete(int id)
+        {
+            Messages? mes = await _context.Messages.FindAsync(id);
+            if (mes != null)
+                _context.Messages.Remove(mes);
         }
 
         public async Task Save()

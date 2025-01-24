@@ -16,13 +16,13 @@
 
             //DELETE
             $("body").on("click", ".btn-delete-student", function () {
-                if(!confirm("Вы действительно желаете удалить студента?"))
+                if(!confirm("Do you really whant to delete this message?"))
                     return;
                 let formData = new FormData();
                 formData.append("id", $(this).data("studentid"));
                 $.ajax({
                     type: 'DELETE',
-                    url: '@Url.Action("DeleteStudent", "Students")',
+                    url: '@Url.Action("DeleteMessage", "Home")',
                     contentType: false,
                     processData: false,
                     data: formData,
@@ -50,7 +50,7 @@
             // Получение всех студентов
             function getAllStudents() {
                 $.ajax({
-                    url: '@Url.Action("GetStudents", "Students")',
+                    url: '@Url.Action("GetAllMessages", "Home")',
                     type: 'GET',
                     contentType: false,
                     processData: false,
@@ -72,7 +72,7 @@
             // GET BY ID
             function getStudent(studentid) {
 
-                let url = '@Url.Action("GetDetailsById", "Students")' + '/' + studentid;
+                let url = '@Url.Action("GetById", "Home")' + '/' + studentid;
                 $.ajax({
                     type: 'GET',
                     url: url,
@@ -93,7 +93,7 @@
             }
 
 
-            //SAVE
+            //SEND
             $("#btn-insert-student").on("click", function () {
                 let formData = new FormData();
                 formData.append("name", $("#name").val());
@@ -101,7 +101,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: '@Url.Action("InsertStudent", "Students")',
+                    url: '@Url.Action("SendMessage", "Home")',
                     contentType: false,
                     processData: false,
                     data: formData,
@@ -116,6 +116,7 @@
                     }
                 });
             });
+
             // UPDATE
             $("#btn-update-student").on("click", function () {
                 let formData = new FormData();
@@ -125,7 +126,7 @@
 
                 $.ajax({
                     type: 'PUT',
-                    url: '@Url.Action("UpdateStudent", "Students")',
+                    url: '@Url.Action("UpdateMessage", "Home")',
                     contentType: false,
                     processData: false,
                     data: formData,
