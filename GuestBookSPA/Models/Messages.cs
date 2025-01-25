@@ -1,7 +1,4 @@
 ﻿
-using GuestBookSPA.Models;
-using System.ComponentModel.DataAnnotations;
-
 namespace GuestBookSPA.Models
 {
     public class Messages
