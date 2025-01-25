@@ -13,7 +13,7 @@ namespace GuestBookSPA.Repository
 
         public async Task<List<Messages>> GetAll()
         {
-            return await _context.Messages.Include(p => p.User).ToListAsync();
+            return await _context.Messages.ToListAsync();
 
         }
         public async Task<Messages> GetById(int id)
@@ -28,7 +28,7 @@ namespace GuestBookSPA.Repository
         }
         public void Update(Messages mes)
         {
-            _context.Entry(mes).State = EntityState.Modified;
+            _context.Entry(mes).State = EntityState.Modified;            
         }
         public async Task Delete(int id)
         {

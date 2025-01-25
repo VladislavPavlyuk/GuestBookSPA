@@ -40,8 +40,8 @@
 
             // создание строки для таблицы
             let row = function (mes) {
-                return "<tr data-rowid='" + mes.Id + "'><td>" + mes.Id + "</td>" +
-                    "<td>" + mes.Name + "</td> <td>" + mes.Surname + "</td>" +                    
+                return "<tr data-rowid='" + mes.Id + "'><td>" + mes.MessageDateTime + "</td>" +
+                    "<td>" + mes.Name + "</td> <td>" + mes.MessageContent + "</td>" +                    
                     "<td><a href='javascript: void (0)' data-studentid='" + mes.Id +
                     "' class='btn btn-success btn-get-student'>Edit</a><a href='javascript: void (0)' data-studentid='" + mes.Id + 
                     "' class='btn btn-danger btn-delete-student'>Delete</a></td></tr>";
@@ -72,19 +72,18 @@
             // GET BY ID
             function getStudent(studentid) {
 
-                let url = '@Url.Action("GetById", "Home")' + '/' + studentid;
+                let url = '@Url.Action("GetDetailsById", "Home")' + '/' + studentid;
                 $.ajax({
                     type: 'GET',
                     url: url,
                     contentType: false,
                     processData: false,
                     success: function (response) {
-                            var student = JSON.parse(response);
-                            $("#surname").val(student.Surname);
-                            $("#name").val(student.Name);
-
-                            $("#hdn-student-id").val(student.Id);
-
+                        var mes = JSON.parse(response);
+                        $("#hdn-student-id").val(mes.Id);
+                        $("#messageContent").val(mes.MessageContent);                        
+                        $("#messageDateTime").val(mes.MessageDateTime);
+                        $("#name").val(mes.Name);
                     },
                     error: function (x, y, z) {
                         alert(x + '\n' + y + '\n' + z);
@@ -96,8 +95,8 @@
             //SEND
             $("#btn-insert-student").on("click", function () {
                 let formData = new FormData();
-                //formData.append("name", $("#name").val());
-                formData.append("MessageContent", $("#surname").val());
+                formData.append("name", $("#name").val());
+                formData.append("MessageContent", $("#messageContent").val());
 
                 $.ajax({
                     type: 'POST',
@@ -119,10 +118,13 @@
 
             // UPDATE
             $("#btn-update-student").on("click", function () {
+                if (!confirm("Do you really whant to update this message?"))
+                    return;
                 let formData = new FormData();
                 formData.append("id", $("#hdn-student-id").val());
+                formData.append("MessageContent", $("#messageContent").val());
+                //formData.append("MessageDateTime", $("#messageDateTime").val());    
                 formData.append("name", $("#name").val());
-                formData.append("surname", $("#surname").val());
 
                 $.ajax({
                     type: 'PUT',
@@ -145,7 +147,9 @@
 
             function resetForm() {
                 $("#hdn-student-id").val("");
-                $("#surname").val("");
+                $("#messageContent").val("");
+                $("#MessageDateTime").val("");
+                $("#name").val("");
             }           
         });
     </script>
@@ -183,7 +187,7 @@
 
                 <div class="col-sm-6">
                     <label for="surname" class="form-label">Message</label>
-                    <input type="text" class="form-control" id="surname" placeholder="Enter Your Message" value="" autocomplete="off" required>
+                    <input type="text" class="form-control" id="messageContent" placeholder="Enter Your Message" value="" autocomplete="off" required>
                 </div>
                 <div class="col-sm-6">
                     <label for="name" class="form-label">Name</label>

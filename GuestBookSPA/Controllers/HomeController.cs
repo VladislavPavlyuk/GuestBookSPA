@@ -1,6 +1,7 @@
 ﻿using GuestBookSPA.Models;
 using GuestBookSPA.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace GuestBookSPA.Controllers
@@ -20,6 +21,19 @@ namespace GuestBookSPA.Controllers
 
             return View(model);
         }
+        [HttpGet]
+        public async Task<IActionResult> GetDetailsById(int id)
+        {
+            var mes = await repo.GetById(id);
+
+            if (mes == null)
+            {
+                return NotFound();
+            }
+            string response = JsonConvert.SerializeObject(mes);
+            return Json(response);
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> GetMessageList()
@@ -41,7 +55,7 @@ namespace GuestBookSPA.Controllers
             {
                 mes.MessageDateTime = DateTime.Now;
 
-                mes.UserId = int.Parse(HttpContext.Session.GetString("Id"));
+                //mes.UserId = int.Parse(HttpContext.Session.GetString("Id"));
 
                 await repo.Create(mes);
 
