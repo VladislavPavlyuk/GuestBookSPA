@@ -5,21 +5,21 @@
     <script>
         $(document).ready(function () {
 
-            // загрузка студентов
-            getAllStudents();
+            // загрузка сообщений
+            getAllMessages();
 
             // нажимаем на ссылку Изменить
-            $("body").on("click", ".btn-get-student", function () {
-                let id = $(this).data("studentid");
-                getStudent(id);
+            $("body").on("click", ".btn-get-message", function () {
+                let id = $(this).data("messageid");
+                getMessage(id);
             });
 
             //DELETE
-            $("body").on("click", ".btn-delete-student", function () {
+            $("body").on("click", ".btn-delete-message", function () {
                 if(!confirm("Do you really whant to delete this message?"))
                     return;
                 let formData = new FormData();
-                formData.append("id", $(this).data("studentid"));
+                formData.append("id", $(this).data("messageid"));
                 $.ajax({
                     type: 'DELETE',
                     url: '@Url.Action("DeleteMessage", "Home")',
@@ -30,7 +30,7 @@
                         alert(response);
                         resetForm();
                         // загрузка студентов
-                        getAllStudents();
+                        getAllMessages();
                     },
                     error: function (x, y, z) {
                         alert(x + '\n' + y + '\n' + z);
@@ -42,13 +42,13 @@
             let row = function (mes) {
                 return "<tr data-rowid='" + mes.Id + "'><td>" + mes.MessageDateTime + "</td>" +
                     "<td>" + mes.Name + "</td> <td>" + mes.MessageContent + "</td>" +                    
-                    "<td><a href='javascript: void (0)' data-studentid='" + mes.Id +
-                    "' class='btn btn-success btn-get-student'>Edit</a><a href='javascript: void (0)' data-studentid='" + mes.Id + 
-                    "' class='btn btn-danger btn-delete-student'>Delete</a></td></tr>";
+                    "<td><a href='javascript: void (0)' data-messageid='" + mes.Id +
+                    "' class='btn btn-success btn-get-message'>Edit</a><a href='javascript: void (0)' data-messageid='" + mes.Id + 
+                    "' class='btn btn-danger btn-delete-message'>Delete</a></td></tr>";
             };
 
             // Получение всех студентов
-            function getAllStudents() {
+            function getAllMessages() {
                 $.ajax({
                     url: '@Url.Action("GetMessageList", "Home")',
                     type: 'GET',
@@ -56,13 +56,13 @@
                     processData: false,
                     success: function (response) {
                         let rows = "";
-                        let students = JSON.parse(response);
-                        students.reverse();
-                        $.each(students, function (index, student) {
+                        let messages = JSON.parse(response);
+                        messages.reverse();
+                        $.each(messages, function (index, message) {
                             // добавляем полученные элементы в таблицу
-                            rows += row(student);
+                            rows += row(message);
                         })
-                        $("#student-list").html(rows); 
+                        $("#message-list").html(rows); 
                     },
                     error: function (x, y, z) {
                         alert(x + '\n' + y + '\n' + z);
@@ -70,9 +70,9 @@
                 });
             }
             // GET BY ID
-            function getStudent(studentid) {
+            function getMessage(messageid) {
 
-                let url = '@Url.Action("GetDetailsById", "Home")' + '/' + studentid;
+                let url = '@Url.Action("GetDetailsById", "Home")' + '/' + messageid;
                 $.ajax({
                     type: 'GET',
                     url: url,
@@ -80,9 +80,9 @@
                     processData: false,
                     success: function (response) {
                         var mes = JSON.parse(response);
-                        $("#hdn-student-id").val(mes.Id);
+                        $("#hdn-message-id").val(mes.Id);
                         $("#messageContent").val(mes.MessageContent);                        
-                        $("#messageDateTime").val(mes.MessageDateTime);
+                        $("#hdn-message-DateTime").val(mes.MessageDateTime);
                         $("#name").val(mes.Name);
                     },
                     error: function (x, y, z) {
@@ -93,7 +93,9 @@
 
 
             //SEND
-            $("#btn-insert-student").on("click", function () {
+            $("#btn-insert-message").on("click", function () {
+                if (!confirm("Do you really whant to send this message?"))
+                    return;
                 let formData = new FormData();
                 formData.append("name", $("#name").val());
                 formData.append("MessageContent", $("#messageContent").val());
@@ -108,7 +110,7 @@
                        alert(response);
                        resetForm();
                         // загрузка студентов
-                       getAllStudents();
+                       getAllMessages();
                     },
                     error: function (x, y, z) {
                         alert(x + '\n' + y + '\n' + z);
@@ -117,13 +119,13 @@
             });
 
             // UPDATE
-            $("#btn-update-student").on("click", function () {
+            $("#btn-update-message").on("click", function () {
                 if (!confirm("Do you really whant to update this message?"))
                     return;
                 let formData = new FormData();
-                formData.append("id", $("#hdn-student-id").val());
+                formData.append("id", $("#hdn-message-id").val());
                 formData.append("MessageContent", $("#messageContent").val());
-                //formData.append("MessageDateTime", $("#messageDateTime").val());    
+                formData.append("MessageDateTime", $("#hdn-message-DateTime").val());    
                 formData.append("name", $("#name").val());
 
                 $.ajax({
@@ -136,7 +138,7 @@
                         alert(response);
                         resetForm();
                         // загрузка студентов
-                        getAllStudents();
+                        getAllMessages();
                     },
                     error: function (x, y, z) {
                         alert(x + '\n' + y + '\n' + z);
@@ -146,9 +148,9 @@
 
 
             function resetForm() {
-                $("#hdn-student-id").val("");
+                $("#hdn-message-id").val("");
                 $("#messageContent").val("");
-                $("#MessageDateTime").val("");
+                $("#messageDateTime").val("");
                 $("#name").val("");
             }           
         });
@@ -173,7 +175,7 @@
                     <td></td>
                 </tr>
             </thead>
-            <tbody id="student-list">
+            <tbody id="message-list">
             </tbody>
         </table>
     </div>
@@ -182,11 +184,12 @@
 <div class="row">
     <div class="col-sm-12">
         <form>
-            <input type="hidden" id="hdn-student-id" />
+            <input type="hidden" id="hdn-message-id" />
+            <input type="hidden" id="hdn-message-DateTime" />
             <div class="row g-3">
 
                 <div class="col-sm-6">
-                    <label for="surname" class="form-label">Message</label>
+                    <label for="messageContent" class="form-label">Message</label>
                     <input type="text" class="form-control" id="messageContent" placeholder="Enter Your Message" value="" autocomplete="off" required>
                 </div>
                 <div class="col-sm-6">
@@ -199,11 +202,11 @@
                 <tbody>
                     <tr>
                         <td>
-                            <a href="javascript:void(0)" class="btn btn-primary" id="btn-insert-student">Send</a>
+                            <a href="javascript:void(0)" class="btn btn-primary" id="btn-insert-message">Send</a>
                         </td>
 
                         <td>
-                            <a href="javascript:void(0)" class="btn btn-info" id="btn-update-student">Update</a>
+                            <a href="javascript:void(0)" class="btn btn-info" id="btn-update-message">Update</a>
                         </td>
                      </tr>
                 </tbody>
